@@ -1,0 +1,332 @@
+@import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600&family=Lora:ital,wght@0,600;0,700;1,600&display=swap');
+
+:root {
+  --indigo-night: #0E1B2E;    /* Chàm đêm sâu */
+  --indigo-deep: #172B47;     /* Chàm đậm */
+  --indigo-wash: #294A75;     /* Chàm loang màu nước */
+  --indigo-mist: #6689B3;     /* Xanh sương khói */
+  --paper-cream: #F5F1E8;     /* Nền giấy mỹ thuật kem ngà */
+  --paper-card: #FCFBF7;      /* Nền thẻ giấy cao cấp */
+  --paper-note: #F0ECE1;      /* Nền giấy ghi chú */
+  --mint-jade: #38A38F;       /* Xanh ngọc bích đồng bộ chữ N logo */
+  --mint-glow: #7CE8D2;
+  --gold-champagne: #F3E5AB;  /* Vàng ánh trăng kem */
+  --ink-text: #182436;
+  --ink-muted: #4A5A70;
+  --border-paper: #D4CCB8;
+
+  --green-bg: #E2F4EA;
+  --green-text: #165B33;
+  --yellow-bg: #FDF5D2;
+  --yellow-text: #7A4B08;
+  --red-bg: #FCE4E4;
+  --red-text: #8C1D1D;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Be Vietnam Pro', -apple-system, BlinkMacSystemFont, sans-serif;
+  color: var(--ink-text);
+  font-size: 18px;
+  line-height: 1.7;
+  min-height: 100vh;
+  background-color: var(--paper-cream);
+  /* Nền giấy mỹ thuật loang màu nước chàm ở 4 góc + họa tiết sóng nước mờ */
+  background-image:
+    radial-gradient(circle at 0% 0%, rgba(23, 43, 71, 0.32) 0%, transparent 42%),
+    radial-gradient(circle at 100% 5%, rgba(41, 74, 117, 0.28) 0%, transparent 45%),
+    radial-gradient(circle at 15% 95%, rgba(56, 163, 143, 0.14) 0%, transparent 45%),
+    radial-gradient(circle at 90% 90%, rgba(23, 43, 71, 0.25) 0%, transparent 50%),
+    url("data:image/svg+xml,%3Csvg width='120' height='60' viewBox='0 0 120 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 30 Q 30 10, 60 30 T 120 30' fill='none' stroke='%23294A75' stroke-opacity='0.06' stroke-width='1.5'/%3E%3Cpath d='M0 45 Q 30 25, 60 45 T 120 45' fill='none' stroke='%2338A38F' stroke-opacity='0.05' stroke-width='1'/%3E%3C/svg%3E");
+}
+
+.container { max-width: 820px; margin: 0 auto; padding: 28px 16px; }
+.container-wide { max-width: 1120px; margin: 0 auto; padding: 28px 16px; }
+
+/* Header thanh thoát phong cách triển lãm nghệ thuật */
+header.topbar {
+  background: linear-gradient(120deg, #0E1B2E 0%, #1C3456 55%, #274873 100%);
+  color: #FAF7F0;
+  padding: 14px 26px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  border-bottom: 1px solid rgba(243, 229, 171, 0.35);
+  box-shadow: 0 10px 30px rgba(14, 27, 46, 0.22);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+.brand {
+  font-family: 'Lora', Georgia, serif;
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  color: #FAF7F0;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.brand span, .brand span.accent { color: var(--mint-glow); }
+
+.nav-links { display: flex; gap: 14px; flex-wrap: wrap; }
+.nav-links a {
+  color: #EAE4D7;
+  text-decoration: none;
+  font-size: 15px;
+  font-weight: 500;
+  padding: 7px 16px;
+  border: 1px solid rgba(243, 229, 171, 0.3);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.04);
+  transition: all 0.2s ease;
+}
+.nav-links a:hover {
+  background: rgba(124, 232, 210, 0.16);
+  color: #FFFFFF;
+  border-color: var(--mint-glow);
+}
+
+.demo-banner {
+  background: #162842;
+  color: var(--gold-champagne);
+  text-align: center;
+  padding: 7px 14px;
+  font-size: 13.5px;
+  letter-spacing: 0.5px;
+  border-bottom: 1px solid rgba(243, 229, 171, 0.18);
+}
+
+/* Thẻ Card giấy mỹ thuật có viền khung đôi sang trọng */
+.card {
+  background: var(--paper-card);
+  border: 1px solid var(--border-paper);
+  border-radius: 14px;
+  padding: 32px 28px;
+  margin-bottom: 24px;
+  box-shadow: 0 12px 32px rgba(14, 27, 46, 0.08);
+  position: relative;
+}
+.card::after {
+  content: "";
+  position: absolute;
+  inset: 7px;
+  border: 1px solid rgba(41, 74, 117, 0.12);
+  border-radius: 9px;
+  pointer-events: none;
+}
+
+/* HERO CARD: Poster Màu Nước Chàm Đêm + Ánh Trăng + Sóng Nước */
+main.container > section.card:first-child {
+  background:
+    radial-gradient(circle at 82% 22%, rgba(243, 229, 171, 0.22) 0%, transparent 32%),
+    radial-gradient(circle at 18% 18%, rgba(124, 232, 210, 0.18) 0%, transparent 45%),
+    radial-gradient(ellipse at 50% 100%, rgba(102, 137, 179, 0.45) 0%, transparent 60%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 320'%3E%3Cpath d='M0 240 Q 200 190, 400 240 T 800 230 L 800 320 L 0 320 Z' fill='%23294A75' fill-opacity='0.35'/%3E%3Cpath d='M0 265 Q 220 225, 450 265 T 800 255 L 800 320 L 0 320 Z' fill='%2338A38F' fill-opacity='0.18'/%3E%3Ccircle cx='660' cy='72' r='44' fill='%23F3E5AB' fill-opacity='0.12'/%3E%3Ccircle cx='660' cy='72' r='28' fill='%23F3E5AB' fill-opacity='0.18'/%3E%3C/svg%3E"),
+    linear-gradient(150deg, #0E1B2E 0%, #1B3354 55%, #23436E 100%);
+  background-size: cover;
+  border: 1.5px solid #3A5E8C;
+  padding: 42px 30px;
+  box-shadow: 0 20px 45px rgba(14, 27, 46, 0.28);
+}
+main.container > section.card:first-child::after {
+  border: 1px solid rgba(243, 229, 171, 0.35);
+}
+main.container > section.card:first-child h1,
+main.container > section.card:first-child h2 {
+  color: #FAF7F0 !important;
+  font-family: 'Lora', Georgia, serif;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.35);
+}
+main.container > section.card:first-child h1 {
+  font-size: 32px;
+  line-height: 1.35;
+  margin-bottom: 16px;
+}
+main.container > section.card:first-child ul,
+main.container > section.card:first-child li {
+  color: #E6EDF7 !important;
+}
+/* Ép màu chữ sáng cho đoạn mô tả trong Hero (trị lỗi inline style màu đen) */
+main.container > section.card:first-child p {
+  color: #E6EDF7 !important;
+  font-size: 19px !important;
+  max-width: 620px;
+  margin: 0 auto 14px auto;
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.25);
+}
+
+h1, h2, h3 {
+  font-family: 'Lora', Georgia, serif;
+  color: var(--indigo-night);
+}
+h1 { font-size: 28px; font-weight: 700; margin-bottom: 14px; line-height: 1.35; }
+h2 {
+  font-size: 23px;
+  font-weight: 700;
+  margin-bottom: 16px;
+  padding-bottom: 10px;
+  border-bottom: 1px dashed var(--border-paper);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+h2::before {
+  content: "✦";
+  color: var(--mint-jade);
+  font-size: 18px;
+}
+h3 { font-size: 19px; font-weight: 700; color: var(--indigo-wash); margin-bottom: 8px; }
+p { margin-bottom: 12px; }
+
+/* Nút bấm ngọc bích ánh vàng tinh tế */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 56px;
+  padding: 14px 28px;
+  font-family: 'Be Vietnam Pro', sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  border-radius: 10px;
+  border: 1px solid rgba(243, 229, 171, 0.45);
+  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  position: relative;
+  z-index: 2;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #3BB39D 0%, #247A6B 100%);
+  color: #FFFFFF;
+  width: 100%;
+  box-shadow: 0 8px 22px rgba(36, 122, 107, 0.35);
+}
+.btn-primary:hover {
+  background: linear-gradient(135deg, #46C4AD 0%, #2B8C7B 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 26px rgba(36, 122, 107, 0.45);
+}
+
+.btn-secondary {
+  background: #EAE4D7;
+  color: var(--indigo-night);
+  border-color: var(--border-paper);
+  width: 100%;
+}
+.btn-secondary:hover { background: #DFD7C5; }
+
+.btn-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 22px; }
+
+/* Các ô quy trình & lựa chọn câu hỏi */
+.grid-2 > div {
+  background: #F7F4EC;
+  border: 1px solid #DFD8C8;
+  border-radius: 10px;
+  padding: 16px 18px;
+}
+
+.option-btn {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 18px 20px;
+  margin-bottom: 12px;
+  font-family: 'Be Vietnam Pro', sans-serif;
+  font-size: 18px;
+  background: #F8F5EE;
+  border: 1.5px solid var(--border-paper);
+  border-radius: 10px;
+  cursor: pointer;
+  color: var(--ink-text);
+  font-weight: 500;
+  transition: all 0.15s ease;
+  position: relative;
+  z-index: 2;
+}
+.option-btn:hover {
+  border-color: var(--indigo-wash);
+  background: #EFECE2;
+}
+.option-btn.selected {
+  background: #E1F3EF;
+  border-color: var(--mint-jade);
+  color: var(--indigo-night);
+  font-weight: 700;
+  box-shadow: 0 4px 14px rgba(56, 163, 143, 0.2);
+}
+
+input[type="time"], input[type="number"], input[type="text"], input[type="password"] {
+  width: 100%;
+  padding: 15px 16px;
+  font-family: 'Be Vietnam Pro', sans-serif;
+  font-size: 20px;
+  border: 1.5px solid var(--border-paper);
+  border-radius: 10px;
+  margin-bottom: 14px;
+  background: #FFFFFF;
+  color: var(--ink-text);
+  position: relative;
+  z-index: 2;
+}
+input:focus { outline: none; border-color: var(--indigo-wash); }
+
+.progress-wrap { background: #E3DDD0; border-radius: 999px; height: 11px; overflow: hidden; margin-bottom: 14px; }
+.progress-bar { background: linear-gradient(90deg, #294A75 0%, #38A38F 100%); height: 100%; width: 0%; transition: width 0.25s ease; }
+
+/* Khung giấy ghi chú kẻ dòng ngang (Memo Note) */
+.alert-medical {
+  background-color: var(--paper-note);
+  background-image: repeating-linear-gradient(
+    transparent,
+    transparent 29px,
+    rgba(41, 74, 117, 0.13) 30px
+  );
+  border: 1px solid #CFC6B4;
+  border-left: 5px solid var(--indigo-wash);
+  padding: 20px 22px;
+  border-radius: 8px;
+  font-size: 16.5px;
+}
+
+.badge {
+  display: inline-block;
+  padding: 8px 18px;
+  border-radius: 8px;
+  font-weight: 800;
+  font-size: 17px;
+  margin-bottom: 12px;
+}
+.badge-GREEN { background: var(--green-bg); color: var(--green-text); border: 1.5px solid #86EFAC; }
+.badge-YELLOW { background: var(--yellow-bg); color: var(--yellow-text); border: 1.5px solid #FDE047; }
+.badge-RED { background: var(--red-bg); color: var(--red-text); border: 1.5px solid #FCA5A5; }
+
+.grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
+.grid-4 { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; }
+
+.kpi-card {
+  background: #F8F5EE;
+  border: 1px solid var(--border-paper);
+  border-radius: 10px;
+  padding: 18px;
+  text-align: center;
+}
+.kpi-val { font-family: 'Lora', serif; font-size: 30px; font-weight: 700; color: var(--indigo-night); }
+.kpi-label { font-size: 15px; color: var(--ink-muted); }
+
+footer {
+  text-align: center;
+  padding: 26px 16px;
+  color: var(--ink-muted);
+  font-size: 15px;
+  border-top: 1px dashed var(--border-paper);
+  margin-top: 32px;
+}

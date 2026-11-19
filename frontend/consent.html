@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Đồng ý tham gia – NOCTIA</title>
+  <link rel="icon" type="image/svg+xml" href="assets/logo.svg" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="index.html" style="display:flex; align-items:center; gap:10px;">
+      <img src="assets/headlogo.svg" alt="NOCTIA Logo" style="height:40px; width:auto;" />
+      </a>
+    </header>
+
+  <main class="container">
+    <div class="card">
+      <h1>Thông tin và Đồng ý tham gia</h1>
+      <p><strong>Mục đích:</strong> Hỗ trợ người bệnh đái tháo đường típ 2 tự sàng lọc chất lượng giấc ngủ, triệu chứng lo âu – trầm cảm và tình trạng tiểu đêm, từ đó nhận hướng dẫn tự chăm sóc và kết nối bác sĩ khi cần.</p>
+      <p><strong>Bảo mật dữ liệu:</strong> Bạn <strong>không cần nhập họ tên, số điện thoại hay mã định danh cá nhân</strong>. Hệ thống chỉ tạo một mã phiên ngẫu nhiên ẩn danh và ghi nhận thời điểm bạn đồng ý.</p>
+      <p><strong>Tính tự nguyện:</strong> Việc tham gia hoàn toàn tự nguyện. Bạn có thể dừng lại bất cứ lúc nào mà không ảnh hưởng đến việc khám chữa bệnh.</p>
+      <div class="alert-medical" style="margin: 16px 0;">
+        <strong>Giới hạn công cụ:</strong> Kết quả sàng lọc không phải là chẩn đoán y khoa và không thay thế việc thăm khám trực tiếp với bác sĩ.
+      </div>
+      <div id="consentMsg" style="color:#991B1B; font-weight:600; margin-bottom:12px;"></div>
+      <div class="btn-row">
+        <button id="btnDecline" class="btn btn-secondary">Không đồng ý</button>
+        <button id="btnAgree" class="btn btn-primary">Tôi đồng ý & Bắt đầu</button>
+      </div>
+    </div>
+  </main>
+
+  <script src="js/api.js"></script>
+  <script>
+    document.getElementById('btnAgree').addEventListener('click', async () => {
+      try {
+        const s = await apiRequest('/sessions', { method: 'POST' });
+        await apiRequest(`/sessions/${s.sessionId}/consent`, {
+          method: 'POST',
+          body: JSON.stringify({ agreed: true })
+        });
+        sessionStorage.setItem('noctia_session_id', s.sessionId);
+        window.location.href = 'questionnaire.html';
+      } catch (err) {
+        document.getElementById('consentMsg').textContent = err.message;
+      }
+    });
+
+    document.getElementById('btnDecline').addEventListener('click', () => {
+      document.getElementById('consentMsg').textContent =
+        'Bạn đã chọn không tham gia. Không có dữ liệu nào được thu thập. Bạn có thể quay về trang chủ bất cứ lúc nào.';
+    });
+  </script>
+</body>
+</html>

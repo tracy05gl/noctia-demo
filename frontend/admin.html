@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quản trị & Thống kê – NOCTIA</title>
+  <link rel="icon" type="image/svg+xml" href="assets/logo.svg" />
+<link rel="stylesheet" href="css/styles.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="index.html" style="display:flex; align-items:center; gap:10px;">
+  <img src="assets/headlogo.svg" alt="NOCTIA Logo" style="height:40px; width:auto;" />
+    <nav class="nav-links"><a href="index.html">Trang chủ</a></nav>
+    </a>
+  </header>
+
+  <main class="container-wide">
+    <div id="loginBox" class="card" style="max-width:440px; margin: 40px auto;">
+      <h2>Đăng nhập Nhóm nghiên cứu</h2>
+      <input type="text" id="username" placeholder="Tên đăng nhập" value="admin_noctia" />
+      <input type="password" id="password" placeholder="Mật khẩu" />
+      <div id="loginErr" style="color:#991B1B; margin-bottom:10px;"></div>
+      <button id="btnLogin" class="btn btn-primary">Đăng nhập</button>
+    </div>
+
+    <div id="dashboard" style="display:none;">
+      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:16px;">
+        <h1>Dashboard Thống kê NOCTIA</h1>
+        <div>
+          <button id="btnExport" class="btn btn-primary" style="width:auto;">Xuất CSV ẩn danh</button>
+        </div>
+      </div>
+
+      <div class="grid-4" id="kpiGrid" style="margin-bottom:20px;"></div>
+
+      <div class="grid-2">
+        <div class="card">
+          <h3>Phân bố mức Xanh – Vàng – Đỏ</h3>
+          <canvas id="clsChart"></canvas>
+        </div>
+        <div class="card">
+          <h3>Điểm trung bình 7 thành phần PSQI (C1–C7)</h3>
+          <canvas id="compChart"></canvas>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="js/api.js"></script>
+  <script>
+    let token = sessionStorage.getItem('noctia_admin_token');
+
+    async function loadDashboard() {
+      try {
+        const stats = await apiRequest('/admin/stats', { headers: { Authorization: `Bearer ${token}` } });
+        document.getElementById('loginBox').style.display = 'none';
+        document.getElementById('dashboard').style.display = 'block';
+
+        const o = stats.overview;
+        document.getElementById('kpiGrid').innerHTML = `
+          <div class="kpi-card"><div class="kpi-val">${o.completed}</div><div class="kpi-label">Lượt hoàn thành (${o.completionRate}%)</div></div>
+          <div class="kpi-card"><div class="kpi-val">${o.avgPsqi}</div><div class="kpi-label">PSQI TB (${o.poorSleepRate}% > 5)</div></div>
+          <div class="kpi-card"><div class="kpi-val">${o.avgHadsA} / ${o.avgHadsD}</div><div class="kpi-label">HADS-A / HADS-D TB</div></div>
+          <div class="kpi-card"><div class="kpi-val">${o.nocturiaGe2Rate}%</div><div class="kpi-label">Tiểu đêm ≥ 2 lần</div></div>
+        `;
+
+        new Chart(document.getElementById('clsChart'), {
+          type: 'doughnut',
+          data: {
+            labels: ['Xanh', 'Vàng', 'Đỏ'],
+            datasets: [{ data: [stats.classificationDist.GREEN, stats.classificationDist.YELLOW, stats.classificationDist.RED], backgroundColor: ['#22C55E', '#EAB308', '#EF4444'] }]
+          }
+        });
+
+        const c = stats.componentsAvg;
+        new Chart(document.getElementById('compChart'), {
+          type: 'bar',
+          data: {
+            labels: ['C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7'],
+            datasets: [{ label: 'Điểm TB', data: [c.c1, c.c2, c.c3, c.c4, c.c5, c.c6, c.c7], backgroundColor: '#0F2942' }]
+          },
+          options: { scales: { y: { min: 0, max: 3 } } }
+        });
+      } catch (err) {
+        sessionStorage.removeItem('noctia_admin_token');
+      }
+    }
+
+    document.getElementById('btnLogin').onclick = async () => {
+      try {
+        const res = await apiRequest('/admin/login', {
+          method: 'POST',
+          body: JSON.stringify({
+            username: document.getElementById('username').value,
+            password: document.getElementById('password').value
+          })
+        });
+        token = res.token;
+        sessionStorage.setItem('noctia_admin_token', token);
+        loadDashboard();
+      } catch (err) {
+        document.getElementById('loginErr').textContent = err.message;
+      }
+    };
+
+    document.getElementById('btnExport').onclick = async () => {
+      const res = await fetch(`${API_BASE}/admin/export.csv`, { headers: { Authorization: `Bearer ${token}` } });
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'noctia_anonymous_export.csv';
+      a.click();
+    };
+
+    if (token) loadDashboard();
+  </script>
+</body>
+</html>

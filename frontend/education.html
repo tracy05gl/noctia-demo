@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Giáo dục sức khỏe – NOCTIA</title>
+  <link rel="icon" type="image/svg+xml" href="assets/logo.svg" />
+<link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="index.html" style="display:flex; align-items:center; gap:10px;">
+  <img src="assets/headlogo.svg" alt="NOCTIA Logo" style="height:40px; width:auto;" />
+  </a>
+    <nav class="nav-links"><a href="index.html">Trang chủ</a></nav>
+  </header>
+
+  <main class="container">
+    <h1>Thư viện Giáo dục Sức khỏe Giấc ngủ</h1>
+    <p class="alert-medical">Nội dung chỉ nhằm mục đích giáo dục sức khỏe và hỗ trợ tự chăm sóc. Không tự ý thay đổi hoặc ngừng thuốc điều trị đái tháo đường khi chưa có chỉ định của bác sĩ.</p>
+    <div id="eduList" style="margin-top:16px;">Đang tải nội dung...</div>
+  </main>
+
+  <script src="js/api.js"></script>
+  <script>
+    apiRequest('/education').then(data => {
+      document.getElementById('eduList').innerHTML = data.items.map(item => `
+        <article class="card">
+          <h2>${item.title}</h2>
+          <p style="font-weight:600; color:#0F2942;">${item.summary}</p>
+          <p>${item.body}</p>
+          <p style="font-size:14px; color:#64748B; margin-bottom:0;"><strong>Tài liệu tham khảo:</strong> ${item.reference}</p>
+        </article>
+      `).join('');
+    });
+  </script>
+</body>
+</html>

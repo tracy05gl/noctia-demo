@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kết quả sàng lọc – NOCTIA</title>
+  <link rel="icon" type="image/svg+xml" href="assets/logo.svg" />
+<link rel="stylesheet" href="css/styles.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="index.html" style="display:flex; align-items:center; gap:10px;">
+  <img src="assets/headlogo.svg" alt="NOCTIA Logo" style="height:40px; width:auto;" />
+  </a>
+    <nav class="nav-links">
+      <a href="education.html">Giáo dục sức khỏe</a>
+      <a href="index.html">Trang chủ</a>
+    </nav>
+  </header>
+
+  <main class="container" id="resultContainer">
+    <div class="card"><p>Đang tải kết quả của bạn...</p></div>
+  </main>
+
+  <script src="js/api.js"></script>
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const sid = params.get('session') || sessionStorage.getItem('noctia_session_id');
+
+    async function loadResult() {
+      const container = document.getElementById('resultContainer');
+      if (!sid) {
+        container.innerHTML = '<div class="card"><p>Không tìm thấy mã phiên đánh giá. <a href="index.html">Quay lại trang chủ</a></p></div>';
+        return;
+      }
+      try {
+        const res = await apiRequest(`/sessions/${sid}/result`);
+        const cls = res.classification;
+        const reasonsHtml = cls.reasons.map(r => `<li>${r}</li>`).join('');
+
+        container.innerHTML = `
+          <section class="card">
+            <div class="badge badge-${cls.level}">${cls.label}</div>
+            <h2>Lý do xếp mức gợi ý</h2>
+            <ul style="padding-left:22px; margin-bottom:14px;">${reasonsHtml}</ul>
+            <p><strong>Bước tiếp theo:</strong> ${cls.nextStep}</p>
+            <div class="alert-medical">${cls.disclaimer}</div>
+          </section>
+
+          <section class="card">
+            <h2>1. Kết quả Chất lượng giấc ngủ (PSQI)</h2>
+            <p><strong>Tổng điểm PSQI:</strong> ${res.psqi.total} / 21 điểm — <strong>${res.psqi.isPoorSleep ? 'Chất lượng giấc ngủ kém (PSQI > 5)' : 'Không thuộc nhóm giấc ngủ kém (PSQI ≤ 5)'}</strong></p>
+            <canvas id="psqiChart" height="170"></canvas>
+          </section>
+
+          <section class="card">
+            <h2>2. Kết quả Sàng lọc Tâm lý (HADS)</h2>
+            <div class="grid-2">
+              <div class="kpi-card">
+                <div class="kpi-label">Lo âu (HADS-A)</div>
+                <div class="kpi-val">${res.hads.hadsA} / 21</div>
+                <div style="font-size:15px; margin-top:6px;">${res.hads.anxiety.label}</div>
+              </div>
+              <div class="kpi-card">
+                <div class="kpi-label">Trầm cảm (HADS-D)</div>
+                <div class="kpi-val">${res.hads.hadsD} / 21</div>
+                <div style="font-size:15px; margin-top:6px;">${res.hads.depression.label}</div>
+              </div>
+            </div>
+            <p style="font-size:15px; color:#475569; margin-top:12px;">Lưu ý: Điểm HADS-A và HADS-D được tính riêng biệt để sàng lọc triệu chứng, không phải chẩn đoán bệnh tâm thần.</p>
+          </section>
+
+          <section class="card">
+            <h2>3. Tình trạng Tiểu đêm</h2>
+            <p><strong>Số lần tiểu đêm:</strong> ${res.nocturia.label}</p>
+            <p>${res.nocturia.recommendation}</p>
+          </section>
+
+          <section class="card">
+            <h2>4. Hướng dẫn tự chăm sóc & Kết nối y tế</h2>
+            <p>Bạn có thể đưa màn hình này cho bác sĩ điều trị tại <strong>Phòng khám Nội 2 – Bệnh viện Trường Đại học Tây Nguyên</strong> xem khi tái khám.</p>
+            <div class="btn-row">
+              <a href="education.html" class="btn btn-primary">Xem hướng dẫn tự chăm sóc</a>
+              <button onclick="window.print()" class="btn btn-secondary">In / Lưu kết quả</button>
+            </div>
+          </section>
+        `;
+
+        const c = res.psqi.components;
+        new Chart(document.getElementById('psqiChart'), {
+          type: 'bar',
+          data: {
+            labels: ['C1: Chủ quan', 'C2: Vào giấc', 'C3: Thời lượng', 'C4: Hiệu quả', 'C5: Rối loạn', 'C6: Thuốc ngủ', 'C7: Ban ngày'],
+            datasets: [{
+              label: 'Điểm thành phần (0–3, càng cao càng kém)',
+              data: [c.c1, c.c2, c.c3, c.c4, c.c5, c.c6, c.c7],
+              backgroundColor: '#0D9488',
+              borderRadius: 6
+            }]
+          },
+          options: { scales: { y: { min: 0, max: 3, ticks: { stepSize: 1 } } } }
+        });
+      } catch (err) {
+        container.innerHTML = `<div class="card"><p style="color:#991B1B;">${err.message}</p></div>`;
+      }
+    }
+    loadResult();
+  </script>
+</body>
+</html>
